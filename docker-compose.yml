@@ -1,0 +1,26 @@
+services:
+  web:
+    image: php:8.4-apache
+    container_name: usdt_web
+    volumes:
+      - ./usdtpay:/var/www/html
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    restart: unless-stopped
+  db:
+    image: mysql:8.0
+    container_name: usdt_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: usdtpay
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./usdtpay/database.sql:/docker-entrypoint-initdb.d/database.sql
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
