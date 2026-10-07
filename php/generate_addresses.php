@@ -161,9 +161,10 @@ function parse_path(string $p): array {
 require_once __DIR__.'/gasfree.php';
 
 // ---------------- main ----------------
-$mnemonic = $argv[1] ?? '';
-$count = isset($argv[2]) ? intval($argv[2]) : 10;
-$start = isset($argv[3]) ? intval($argv[3]) : 0;
+if (PHP_SAPI === 'cli' && realpath($argv[0] ?? '') === __FILE__) {
+    $mnemonic = $argv[1] ?? '';
+    $count = isset($argv[2]) ? intval($argv[2]) : 10;
+    $start = isset($argv[3]) ? intval($argv[3]) : 0;
 
 if (trim($mnemonic) === '') {
     fwrite(STDERR, "usage: php generate_addresses.php <mnemonic> <count> [start]\n");
@@ -207,4 +208,5 @@ for ($i = $start; $i < $start + $count; $i++) {
 }
 
 echo "added $added addresses (index $start.." . ($start + $count - 1) . ")\n";
+}
 ?>

@@ -8,7 +8,7 @@ define('DB_PASS', '');
 define('DB_NAME', 'usdtpay');
 
 // Application configuration
-define('BASE_URL', 'http://192.168.80.200:8080'); //base url
+define('BASE_URL', 'http://tonkassa.ru.host1531393.serv7.hostland.pro/php'); //base url
 define('SITE_NAME', 'USDT Pay'); //site title
 define('ADMIN_EMAIL', 'admin@example.com'); //used for sending emails
 define('TRON_API_KEY', '27dcc683-8ba5-4dd4-9628-773a47808b3b'); // TronGrid API key

@@ -40,7 +40,12 @@ function getAddressFromPool(): array
 
     // 2. Нет свободных — генерируем пул
     if (!$row) {
-        generateNewAddresses(5);
+        // On empty pool generate new addresses programmatically
+        if (!function_exists('generateNewAddresses')) {
+            require_once __DIR__ . '/generate_addresses.php';
+        }
+        $generatedNew = generateNewAddresses(5);
+        // retry fetch
         $stmt = $db->query($freeSql);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -105,9 +110,40 @@ function generateNewAddresses(int $count): array
         throw new RuntimeException('Генератор не найден: ' . $script);
     }
 
+    // Fallback: try shell exec; if it fails (e.g. shell_exec disabled on shared hosting),
+    // generate in-process using the pure-PHP derivation from generate_addresses.php.
     $cmd = sprintf('php %s %s %d %d 2>&1',
         escapeshellarg($script), escapeshellarg($mnemonic), $count, $startIndex);
-    $out = shell_exec($cmd);
+
+    $out = @shell_exec($cmd);
+    if ($out === null || $out === '') {
+        // in-process fallback
+        if (!function_exists('mnemonic_to_seed')) {
+            // generate_addresses.php has a CLI-only main section; strip it before eval
+            $genSrc = file_get_contents($script);
+            $cutPos = strpos($genSrc, "// ---------------- main ----------------");
+            if ($cutPos !== false) {
+                $genSrc = substr($genSrc, 0, $cutPos);
+            }
+            eval('?>' . $genSrc);
+        }
+        $seed = mnemonic_to_seed($mnemonic);
+        [$k, $c] = derive_master($seed);
+        foreach (parse_path("m/44'/195'/0'") as $idx) {
+            [$k, $c] = ckd_priv($k, $c, $idx);
+        }
+        $stmtIns = $db->prepare("INSERT IGNORE INTO addresses (address, privkey, assigned, addr_index) VALUES (?,?,0,?)");
+        for ($i = $startIndex; $i < $startIndex + $count; $i++) {
+            [$ki, $ci] = ckd_priv($k, $c, $i);
+            $addr = privkey_to_tron_address($ki);
+            $hex = str_pad(gmp_export($ki, 1, GMP_MSW_FIRST | GMP_BIG_ENDIAN), 32, "\x00", STR_PAD_LEFT);
+            $stmtIns->execute([$addr, bin2hex($hex), $i]);
+            if ($stmtIns->rowCount() > 0) {
+                $addresses[] = $addr;
+            }
+        }
+        return $addresses;
+    }
 
     $addresses = [];
     if ($out) {
