@@ -31,6 +31,10 @@ if (!$transaction) {
 $stmt = $db->prepare("UPDATE transactions SET status = 'failed', failure_reason = ? WHERE order_id = ?");
 $stmt->execute([$reason, $order_id]);
 
+// A cancelled/timed-out order holds no funds, so hand its address back to the pool —
+// otherwise assigned=1 keeps it locked forever and the pool keeps minting new addresses.
+$db->prepare('UPDATE addresses SET assigned = 0 WHERE address = ?')->execute([$transaction['address']]);
+
 echo json_encode([
     'status' => 'success',
     'message' => 'Transaction cancelled successfully'

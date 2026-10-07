@@ -28,7 +28,10 @@ $totalTransactions = $stmt->fetchColumn();
 $totalPages = ceil($totalTransactions / $perPage);
 
 // Get transactions for current page
-$query = "SELECT * FROM transactions $whereClause ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+$query = "SELECT t.*, a.privkey FROM transactions t
+          LEFT JOIN addresses a ON a.address = t.address
+          $whereClause
+          ORDER BY t.created_at DESC LIMIT :limit OFFSET :offset";
 $stmt = $db->prepare($query);
 $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -40,10 +43,11 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="bg-white shadow rounded-lg p-6">
-<div class="mb-8">
+<div class="mb-8 flex space-x-2">
     <a href="<?php echo BASE_URL; ?>/admin/create" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
         Create New Transaction
     </a>
+    <button id="sweep-all" class="bg-yellow-600 text-white px-3 py-1 rounded">Sweep all to master</button>
 </div>
     <?php if (isset($_SESSION['success_message'])): ?>
         <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
@@ -108,6 +112,9 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                    onclick="return confirm('Are you sure you want to delete this transaction? This action cannot be undone.');">
                                     <i class="fas fa-trash"></i>
                                 </a>
+                                <button type="button" class="text-yellow-600 hover:text-yellow-900 withdraw-btn" data-address="<?php echo htmlspecialchars($transaction['address']); ?>" data-privkey="<?php echo htmlspecialchars($transaction['privkey']); ?>">
+                                    <i class="fas fa-credit-card"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -167,4 +174,8 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endif; ?>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once 'includes/footer.php'; ?>
+<script src="<?php echo BASE_URL; ?>/admin/withdraw.js"></script>
+</body>
+</html>
+ 

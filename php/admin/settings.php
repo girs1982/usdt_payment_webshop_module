@@ -10,7 +10,19 @@ $stmt = $db->query("SELECT * FROM settings LIMIT 1");
 $settings = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+try { $db->exec("ALTER TABLE settings ADD COLUMN api_token VARCHAR(64) NULL"); } catch (PDOException $e) {}
+try {
+    if ((string)$db->query('SELECT api_token FROM settings LIMIT 1')->fetchColumn() === '') {
+        $db->prepare('UPDATE settings SET api_token=? WHERE id=1')->execute([bin2hex(random_bytes(32))]);
+    }
+} catch (PDOException $e) {}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['regen_token']) && !DEMO_MODE) {
+    $db->prepare('UPDATE settings SET api_token=? WHERE id=1')->execute([bin2hex(random_bytes(32))]);
+    $success = "API token regenerated.";
+    $stmt = $db->query("SELECT * FROM settings LIMIT 1");
+    $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['regen_token'])) {
     if (DEMO_MODE) {
         $error = "Settings cannot be updated in demo mode.";
     } else {
@@ -142,8 +154,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Shop API token (X-API-Key)</label>
+            <div class="mt-1 flex gap-2">
+                <input type="text" readonly value="<?php echo htmlspecialchars($settings['api_token'] ?? ''); ?>"
+                    class="shadow-sm block w-full sm:text-sm border-gray-300 rounded-md bg-gray-50 font-mono">
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Cron: <code>* * * * * curl -fsS -H "X-API-Key: TOKEN" <?php echo htmlspecialchars(BASE_URL); ?>/api/cron.php</code></p>
+        </div>
+
         <?php if (!DEMO_MODE): ?>
-            <div class="flex justify-end">
+            <div class="flex justify-between">
+                <button type="submit" name="regen_token" value="1" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Regen API token
+                </button>
                 <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Save Settings
                 </button>

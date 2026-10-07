@@ -28,6 +28,10 @@ $settings = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Calculate expiration time based on transaction creation time
 $expires = strtotime($transaction['created_at']) + $settings['checkout_timeout'];
+
+// TronLink and other wallets send USDT with 4 decimals; showing the raw 6-decimal tag
+// made customers pay a rounded amount that never matched the order.
+$payAmount = number_format(round((float)$transaction['payment_amount'], 4), 4, '.', '');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +39,7 @@ $expires = strtotime($transaction['created_at']) + $settings['checkout_timeout']
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - <?php echo SITE_NAME; ?></title>
+    <link rel="icon" href="<?php echo BASE_URL; ?>/favicon.ico" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -95,14 +100,14 @@ $expires = strtotime($transaction['created_at']) + $settings['checkout_timeout']
                         <div class="text-3xl font-bold text-indigo-600 mb-6 cursor-pointer hover:text-indigo-700 transition-colors" 
                              onclick="copyAmount()" 
                              id="amount-display">
-                            <?php echo number_format($transaction['payment_amount'], 6); ?> USDT
+                            <?php echo $payAmount; ?> USDT
                         </div>
                         <span class="tooltiptext">Amount copied!</span>
                     </div>
                     
                     <div class="text-sm text-gray-500 mb-2">Scan QR Code to Pay</div>
                     <div class="inline-block bg-white rounded-lg shadow">
-                        <img src="<?php echo BASE_URL; ?>/public/qrcode.php?data=<?php echo urlencode($settings['usdt_address']); ?>" alt="USDT Payment QR Code" class="w-48 h-48">
+                        <img src="<?php echo BASE_URL; ?>/public/qrcode.php?data=<?php echo urlencode($settings['usdt_address'] . "?amount=" . $payAmount); ?>" alt="USDT Payment QR Code" class="w-48 h-48">
                     </div>
                     <div class="mt-4">
                         <div class="text-sm text-gray-500">USDT Address (<?php echo htmlspecialchars($transaction['network']); ?>):</div>
@@ -197,26 +202,56 @@ $expires = strtotime($transaction['created_at']) + $settings['checkout_timeout']
 
         // Copy amount function
         function copyAmount() {
-            const amount = '<?php echo $transaction['payment_amount']; ?>';
-            navigator.clipboard.writeText(amount).then(() => {
-                const tooltip = document.querySelector('.tooltip');
-                tooltip.classList.add('show');
-                setTimeout(() => {
-                    tooltip.classList.remove('show');
-                }, 2000);
-            });
+            const amount = '<?php echo $payAmount; ?>';
+            const ta = document.createElement('textarea');
+            ta.value = amount;
+            ta.style.position = 'fixed';
+            ta.style.top = '0';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+            const tooltip = document.querySelector('.tooltip');
+            tooltip.classList.add('show');
+            setTimeout(() => {
+                tooltip.classList.remove('show');
+            }, 2000);
         }
 
         // Copy USDT address function
         function copyUSDTAddress() {
             const address = '<?php echo $transaction['address']; ?>';
-            navigator.clipboard.writeText(address).then(() => {
+            const copyToClipboard = (text) => {
                 const copyButton = document.getElementById('copy-button');
-                copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                setTimeout(() => {
-                    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                }, 2000);
-            });
+                const done = () => {
+                    copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                    }, 2000);
+                };
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(done).catch(() => {
+                        fallbackCopy(text); done();
+                    });
+                } else {
+                    fallbackCopy(text); done();
+                }
+            };
+            const fallbackCopy = (text) => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.top = '0';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); } catch (e) {}
+                document.body.removeChild(ta);
+            };
+            copyToClipboard(address);
         }
     </script>
 </body>

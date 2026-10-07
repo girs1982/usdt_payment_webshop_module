@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set('Africa/Lagos');
+date_default_timezone_set('UTC');
 
 // Database configuration
 define('DB_HOST', 'localhost');
@@ -8,9 +8,11 @@ define('DB_PASS', '');
 define('DB_NAME', 'usdtpay');
 
 // Application configuration
-define('BASE_URL', 'http://yourdomain.com'); //base url
+define('BASE_URL', 'http://192.168.80.200:8080'); //base url
 define('SITE_NAME', 'USDT Pay'); //site title
-define('ADMIN_EMAIL', 'youradmin@example.com'); //used for sending emails
+define('ADMIN_EMAIL', 'admin@example.com'); //used for sending emails
+define('TRON_API_KEY', '27dcc683-8ba5-4dd4-9628-773a47808b3b'); // TronGrid API key
+define('TRON_MNEMONIC', 'tissue suggest badge roast vintage tomato emerge prefer orbit night front divorce'); // BIP39 default mnemonic
 
 // Demo mode configuration
 define('DEMO_MODE', false); // Set to true for demo mode, false for production
@@ -46,7 +48,9 @@ function generateOrderId() {
 }
 
 function generateRandomDecimal() {
-    return mt_rand(1, 1000000) / 1000000;
+    // 4 decimals, matching the precision TronLink and other wallets actually send:
+    // a 6-decimal tag (e.g. 3.578740) arrives as 3.578700 and never matches the order.
+    return mt_rand(1, 9999) / 10000;
 }
 
 function isAdminLoggedIn() {

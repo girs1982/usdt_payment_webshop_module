@@ -2,6 +2,9 @@
 $pageTitle = 'Create Transaction';
 require_once 'includes/header.php';
 
+// Address pool helpers (getAddressFromPool / generateNewAddresses)
+require_once dirname(__DIR__).'/get_address_from_pool.php';
+
 // Get database connection
 $db = getDBConnection();
 
@@ -39,17 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $db->query("SELECT * FROM settings LIMIT 1");
         $settings = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Insert transaction
+$addressRecord = getAddressFromPool();
+        $address = $addressRecord['address'];
+        $privKeyHex = $addressRecord['privkey'];
+        if (!$address) {
+            throw new Exception('Нет свободных адресов в пуле');
+        }
         $stmt = $db->prepare("INSERT INTO transactions (order_id, customer_name, customer_email, real_amount, payment_amount, address, network, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
-        $stmt->execute([$orderId, $customerName, $customerEmail, $realAmount, $paymentAmount, $settings['usdt_address'], $settings['network']]);
-        
-        $message = 'Transaction created successfully!';
-        $messageType = 'success';
-        
-        // Clear form values on success
-        $realAmount = '';
-        $customerName = '';
-        $customerEmail = '';
+        $stmt->execute([$orderId, $customerName, $customerEmail, $realAmount, $paymentAmount, $address, 'TRC20']);
     } catch (Exception $e) {
         $message = $e->getMessage();
         $messageType = 'error';

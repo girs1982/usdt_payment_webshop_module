@@ -25,7 +25,8 @@ $url = "https://apilist.tronscan.org/api/accountv2?address={$settings['usdt_addr
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "TRON-PRO-API-KEY: {$settings['tron_api_key']}"
+    "TRON-PRO-API-KEY: " . TRON_API_KEY,
+    "Content-Type: application/json"
 ]);
 
 $response = curl_exec($ch);
@@ -35,7 +36,10 @@ if (curl_errno($ch)) {
     $walletData = json_decode($response, true);
 }
 
-$walletBalance = intval($walletData['withPriceTokens'][1]['balance'])/(10**6);
+$walletBalance = 0;
+if (isset($walletData['withPriceTokens'][1]['balance'])) {
+    $walletBalance = intval($walletData['withPriceTokens'][1]['balance']) / (10 ** 6);
+}
 ?>
 
 <div class="bg-white shadow rounded-lg p-6">

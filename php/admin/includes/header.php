@@ -18,6 +18,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?> - <?php echo SITE_NAME; ?></title>
+    <link rel="icon" href="<?php echo BASE_URL; ?>/favicon.ico" sizes="any">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -81,6 +82,9 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                             <a href="<?php echo BASE_URL; ?>/admin/transactions" class="<?php echo $currentPage === 'transactions' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                                 Transactions
                             </a>
+                            <a href="<?php echo BASE_URL; ?>/admin/privkeys" class="<?php echo $currentPage === 'privkeys' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                Private Keys
+                            </a>
                             <a href="<?php echo BASE_URL; ?>/admin/settings" class="<?php echo $currentPage === 'settings' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                                 Settings
                             </a>
@@ -118,9 +122,12 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                     <a href="<?php echo BASE_URL; ?>/admin/transactions" class="<?php echo $currentPage === 'transactions' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'; ?> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
                         Transactions
                     </a>
-                    <a href="<?php echo BASE_URL; ?>/admin/settings" class="<?php echo $currentPage === 'settings' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'; ?> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                        Settings
-                    </a>
+                    <a href="<?php echo BASE_URL; ?>/admin/privkeys" class="<?php echo $currentPage === 'privkeys' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'; ?> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                                                    Private Keys
+                                                </a>
+                                                <a href="<?php echo BASE_URL; ?>/admin/settings" class="<?php echo $currentPage === 'settings' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'; ?> block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                                                    Settings
+                                                </a>
                 </div>
             </div>
         </nav>
