@@ -27,7 +27,7 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "TRON-PRO-API-KEY: " . TRON_API_KEY,
     "Content-Type: application/json"
-]);;
+]);
 
 $response = curl_exec($ch);
 if (curl_errno($ch)) {
