@@ -8,9 +8,9 @@ define('DB_PASS', '');
 define('DB_NAME', 'usdtpay');
 
 // Application configuration
-define('BASE_URL', 'http://localhost/usdtpay'); //base url
+define('BASE_URL', 'http://yourdomain.com'); //base url
 define('SITE_NAME', 'USDT Pay'); //site title
-define('ADMIN_EMAIL', 'admin@example.com'); //used for sending emails
+define('ADMIN_EMAIL', 'youradmin@example.com'); //used for sending emails
 
 // Demo mode configuration
 define('DEMO_MODE', false); // Set to true for demo mode, false for production

@@ -4,9 +4,25 @@
 
 1. Скачайте репозиторий: `git clone https://github.com/girs1982/usdt_payment_webshop_module.git`.
 2. Перейдите в директорию проекта: `cd usdt_payment_webshop_module`.
-3. Настройте параметры в `config.php` (DB_HOST, DB_USER, DB_PASS, TRON_API_KEY, TRON_MNEMONIC).
-4. Импортируйте базу данных: `mysql -u ваш-пользователь -p ваша-база < usdtpay/database.sql`.
-5. Настройте веб-сервер для работы с PHP (Apache/Nginx).
+3. Создайте базу данных `usdtpay` в панели хостинга или phpMyAdmin.
+4. Настройте параметры в `usdtpay/config.php`:
+   - DB_HOST: `localhost` (или `127.0.0.1:3307` если MySQL слушает на другом порту)
+   - DB_USER: ваш логин от БД
+   - DB_PASS: ваш пароль от БД
+   - DB_NAME: `usdtpay`
+5. Импортируйте схему через phpMyAdmin (файл `usdtpay/database.sql`) или через терминал:
+   ```bash
+   mysql -u ваш-логин -p usdtpay < usdtpay/database.sql
+   ```
+   Если у вас нет mysql CLI — импортируйте через phpMyAdmin: выберите базу `usdtpay`, импорт из `usdtpay/database.sql`.
+6. Настройте веб-сервер для работы с PHP (Apache/Nginx).
+7. Убедитесь, что таблицы созданы: в админке (`/admin/transactions.php`) должен отображаться список транзакций (если пусто — это нормально).
+8. Проверьте доступность страниц:
+   - `http://ваш-домен/usdtpay/public/checkout.php` — форма оплаты
+   - `http://ваш-домен/usdtpay/admin/login.php` — вход в админку
+9. Если страницы не открываются:
+   - Проверьте права на файлы: `chmod -R 755 usdtpay/`
+   - Проверьте конфиг веб-сервера (Apache/Nginx) — корень должен указывать на `usdtpay/public/`
 
 ## Подключение API к магазину
 

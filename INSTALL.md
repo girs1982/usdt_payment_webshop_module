@@ -3,7 +3,7 @@
 ## Требования
 
 - PHP 7.4+
-- MySQL 5.7+
+- MySQL 5.7+ (или MariaDB)
 - TronGrid API ключ
 
 ## Установка
@@ -13,12 +13,18 @@
    git clone https://github.com/girs1982/usdt_payment_webshop_module.git
    cd usdt_payment_webshop_module
    ```
-2. Настройте `config.php` с вашими параметрами.
-3. Импортируйте базу данных:
+2. Создайте базу данных `usdtpay` в панели управления хостингом (или через phpMyAdmin).
+3. Настройте `usdtpay/config.php` с вашими данными MySQL:
+   - DB_HOST: `localhost` или `127.0.0.1`
+   - DB_USER: ваш логин от БД
+   - DB_PASS: ваш пароль от БД
+   - DB_NAME: `usdtpay`
+4. Импортируйте схему через phpMyAdmin (импорт `usdtpay/database.sql`) или через терминал:
    ```bash
-   mysql -u ваш-пользователь -p ваша-база < usdtpay/database.sql
+   mysql -u ваш-логин -p your_db_name < usdtpay/database.sql
    ```
-4. Настройте веб-сервер для работы с PHP.
+   Если MySQL слушает на нестандартном порту (например, 3307), укажите хост как `127.0.0.1:3307`.
+5. Настройте веб-сервер для работы с PHP.
 
 ## Настройка плагина JoomShopping
 
