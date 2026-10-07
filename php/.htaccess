@@ -1,4 +1,5 @@
 RewriteEngine On
+RewriteBase /php/
 
 # Remove .php extension from URLs
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -14,6 +15,7 @@ RewriteRule ^admin/create/?$ admin/create_transaction.php [L]
 RewriteRule ^admin/transactions/?$ admin/transactions.php [L]
 RewriteRule ^admin/transaction/([^/]+)/?$ admin/transaction.php?id=$1 [L]
 RewriteRule ^admin/delete_transaction/([^/]+)/?$ admin/delete_transaction.php?id=$1 [L]
+RewriteRule ^admin/privkeys/?$ admin/privkeys.php [L]
 
 # Public section URL rewriting
 RewriteRule ^checkout/([^/]+)/?$ public/checkout.php?order_id=$1 [L]
