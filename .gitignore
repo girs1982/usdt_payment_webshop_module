@@ -3,6 +3,7 @@ db/
 *.zip
 *.sql
 !usdtpay/database.sql
+!php/database.sql
 __pycache__/
 *.pyc
 _mnemonic.txt
