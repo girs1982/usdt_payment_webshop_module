@@ -57,8 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $address = $addressRecord['address'];
         $privKeyHex = $addressRecord['privkey'];
-        if (!$address) {
-            throw new Exception('Нет свободных адресов в пуле');
+        if (!$addressRecord['address']) {
+            error_log('--- transaction: pool empty after refill');
+            throw new Exception('Нет свободных адресов в пуле. <br><pre>' . htmlspecialchars(print_r($addressRecord, true)) . '</pre>');
         }
         $stmt = $db->prepare("INSERT INTO transactions (order_id, customer_name, customer_email, real_amount, payment_amount, address, network, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
         $stmt->execute([$orderId, $customerName, $customerEmail, $realAmount, $paymentAmount, $address, 'TRC20']);
