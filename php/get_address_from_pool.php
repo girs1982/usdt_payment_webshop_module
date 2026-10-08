@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+ini_set('error_log', __DIR__.'/../debug.log');
 /**
  * Возвращает свободный TRON-адрес из пула.
  * Свободный = нет pending-транзакции на этот адрес.
