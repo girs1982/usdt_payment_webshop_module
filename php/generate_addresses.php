@@ -182,6 +182,7 @@ foreach (parse_path("m/44'/195'/0'") as $idx) {
 // connect MySQL
 require_once __DIR__ . '/config.php';
 $db = getDBConnection();
+$start = $db->query("SELECT COALESCE(MAX(addr_index),-1)+1 FROM addresses")->fetchColumn();
 
 $db->exec("CREATE TABLE IF NOT EXISTS addresses (
     id INT AUTO_INCREMENT PRIMARY KEY,
