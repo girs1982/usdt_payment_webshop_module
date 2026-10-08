@@ -40,12 +40,15 @@ function getAddressFromPool(): array
 
     // Count free
     $avail = $db->query("SELECT COUNT(*) FROM addresses WHERE assigned = 0")->fetchColumn();
+    error_log('--- pool: free rows='.$avail);
     $need = max(0, 5 - $avail);
     if ($need > 0) {
+        error_log('--- pool: need='.$need.' calling generateNewAddresses');
         if (!function_exists('generateNewAddresses')) {
             require_once __DIR__ . '/generate_addresses.php';
         }
         $generatedNew = generateNewAddresses($need);
+        error_log('--- pool: generated='.count($generatedNew));
     }
     $stmt = $db->query($freeSql);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
