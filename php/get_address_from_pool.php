@@ -40,10 +40,13 @@ function getAddressFromPool(): array
     $stmt = $db->query($freeSql);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Count free
+    // Count current pending transactions
+    $pending = $db->query("SELECT COUNT(*) FROM transactions WHERE status='pending'")->fetchColumn();
+    // Count free rows
     $avail = $db->query("SELECT COUNT(*) FROM addresses WHERE assigned = 0")->fetchColumn();
-    error_log('--- pool: free rows='.$avail);
-    $need = max(0, 5 - $avail);
+    error_log('--- pool: free rows='.$avail.' pending rows='.$pending);
+    // Want at least pending+5 free addresses
+    $need = max(0, $pending + 5 - $avail);
     if ($need > 0) {
         error_log('--- pool: need='.$need.' calling generateNewAddresses');
         if (!function_exists('generateNewAddresses')) {
