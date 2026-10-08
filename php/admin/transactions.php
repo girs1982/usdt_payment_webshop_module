@@ -1,6 +1,6 @@
 <?php
 $pageTitle = 'Transactions';
-require_once 'includes/header.php';
+require_once __DIR__ . '/includes/header.php';
 
 // Get database connection
 $db = getDBConnection();
@@ -174,7 +174,7 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endif; ?>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
 <script src="<?php echo BASE_URL; ?>/admin/withdraw.js"></script>
 </body>
 </html>

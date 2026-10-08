@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Private Keys';
 $currentPage = 'privkeys';
-require_once 'includes/header.php';
+require_once __DIR__ . '/includes/header.php';
 
 $db = getDBConnection();
 
@@ -174,4 +174,4 @@ document.getElementById('toggleKeys').addEventListener('click', function () {
 });
 </script>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

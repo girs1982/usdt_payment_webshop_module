@@ -126,4 +126,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once __DIR__ . '/includes/footer.php'; ?> 
