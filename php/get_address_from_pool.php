@@ -118,6 +118,7 @@ function generateNewAddresses(int $count): array
     $out = @shell_exec($cmd);
     if ($out === null || $out === '') {
         // in-process fallback
+        $addresses = [];
         if (!function_exists('mnemonic_to_seed')) {
             // generate_addresses.php has a CLI-only main section; strip it before eval
             $genSrc = file_get_contents($script);
