@@ -3,9 +3,9 @@ date_default_timezone_set('UTC');
 
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'usdtpay');
+define('DB_USER', 'host1531393_usdt');
+define('DB_PASS', '83219Usdt');
+define('DB_NAME', 'host1531393_usdt');
 
 // Application configuration
 define('BASE_URL', 'http://tonkassa.ru.host1531393.serv7.hostland.pro/php'); //base url
