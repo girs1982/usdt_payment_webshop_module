@@ -1,0 +1,10 @@
+[08-Oct-2026 15:39:36 UTC] --- transaction: before getAddressFromPool
+[08-Oct-2026 15:39:36 UTC] --- pool: free rows=22 pending rows=1
+[08-Oct-2026 15:39:36 UTC] --- transaction: after getAddressFromPool: Array
+(
+    [id] => 2
+    [address] => TNCnXFGyabmiyFkzcrBRZXgmNq4cDw1p2V
+    [privkey] => 54b44edc53a85f5c00b319fb92d7197529c658bf9b910bd6140fb2a0df54bb09
+)
+
+[08-Oct-2026 17:05:40 UTC] --- pool: free rows=22 pending rows=2
