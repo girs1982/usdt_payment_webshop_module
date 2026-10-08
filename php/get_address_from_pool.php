@@ -38,17 +38,17 @@ function getAddressFromPool(): array
     $stmt = $db->query($freeSql);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // 2. Нет свободных — генерируем пул
-    if (!$row) {
-        // On empty pool generate new addresses programmatically
+    // Count free
+    $avail = $db->query("SELECT COUNT(*) FROM addresses WHERE assigned = 0")->fetchColumn();
+    $need = max(0, 5 - $avail);
+    if ($need > 0) {
         if (!function_exists('generateNewAddresses')) {
             require_once __DIR__ . '/generate_addresses.php';
         }
-        $generatedNew = generateNewAddresses(5);
-        // retry fetch
-        $stmt = $db->query($freeSql);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $generatedNew = generateNewAddresses($need);
     }
+    $stmt = $db->query($freeSql);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$row) {
         return ['address' => null, 'privkey' => null];
