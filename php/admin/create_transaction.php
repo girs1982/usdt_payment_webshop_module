@@ -1,6 +1,6 @@
 <?php
 $pageTitle = 'Create Transaction';
-require_once 'includes/header.php';
+require_once __DIR__ . '/includes/header.php';
 
 // Address pool helpers (getAddressFromPool / generateNewAddresses)
 require_once dirname(__DIR__).'/get_address_from_pool.php';
