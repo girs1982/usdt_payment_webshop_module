@@ -62,9 +62,8 @@ function getAddressFromPool(): array
         return ['address' => null, 'privkey' => null];
     }
 
-    // помечаем адрес занятым, чтобы не выдавать повторно
-    $db->prepare('UPDATE addresses SET assigned=1 WHERE id=?')->execute([$row['id']]);
-
+    // не маркируем адрес занятым: "свободный" = нет pending-транзакции,
+    // фильтр NOT EXISTS в $freeSql это уже проверяет.
     return $row;
 }
 
