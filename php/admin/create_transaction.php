@@ -42,7 +42,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $db->query("SELECT * FROM settings LIMIT 1");
         $settings = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$addressRecord = getAddressFromPool();
+        $addressRecord = getAddressFromPool();
+        if (!$addressRecord['address']) {
+            // пула не хватает адресов – генерируем минимум 5
+            $need = 5;
+            if (!function_exists('generateNewAddresses')) {
+                require_once dirname(__DIR__).'/generate_addresses.php';
+            }
+            generateNewAddresses($need);
+            $addressRecord = getAddressFromPool();
+        }
         $address = $addressRecord['address'];
         $privKeyHex = $addressRecord['privkey'];
         if (!$address) {
