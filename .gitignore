@@ -4,6 +4,9 @@ db/
 *.sql
 !usdtpay/database.sql
 !php/database.sql
+!_pool_setup.sql
+!_update_address.sql
+!_update_mnemonic.sql
 __pycache__/
 *.pyc
 _mnemonic.txt
